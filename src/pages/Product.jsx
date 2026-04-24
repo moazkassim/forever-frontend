@@ -2,9 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import { assets } from "../assets/assets";
+import RelatedProducts from "../components/RelatedProducts";
+
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency } = useContext(ShopContext);
+  const { products, currency, addToCart } = useContext(ShopContext);
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -22,7 +24,6 @@ const Product = () => {
 
   useEffect(() => {
     fetchProductData();
-    console.log(productData);
   }, [productId]);
 
   return productData ? (
@@ -77,7 +78,10 @@ const Product = () => {
               ))}
             </div>
           </div>
-          <button className=" bg-black text-white px-8 py-3 text-sm active:bg-gray-700">
+          <button
+            className=" bg-black text-white px-8 py-3 text-sm active:bg-gray-700"
+            onClick={() => addToCart(productData._id, size)}
+          >
             ADD TO CART
           </button>
           <hr className=" mt-8 sm:w-4/5" />
@@ -114,6 +118,10 @@ const Product = () => {
       </div>
 
       {/* display relate products */}
+      <RelatedProducts
+        category={productData.category}
+        subCategory={productData.subCategory}
+      />
     </div>
   ) : (
     <div>no data there</div>
