@@ -1,6 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState } from "react";
 import { products } from "../assets/assets.js";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
@@ -9,6 +10,7 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const navigate = useNavigate();
   const addToCart = async (itemId, size) => {
     let cartData = structuredClone(cartItems);
     if (!size) {
@@ -35,8 +37,42 @@ const ShopContextProvider = (props) => {
           totalCount += cartItems[items][item];
         }
       }
-      return totalCount;
     }
+    return totalCount;
+  };
+  const updateQuantity = async (itemId, size, quantity) => {
+    // let cartItem = cartItems.find(
+    //   (item) => item._id === itemId && item.size === size,
+    // );
+    // cartItem.quantity = quantity;
+
+    // cartData.map((item) =>
+    //   item._id === itemId && item.size === size
+    //     ? { ...item, quantity: quantity }
+    //     : item,
+    // );
+    let cartData = structuredClone(cartItems);
+    cartData[itemId][size] = quantity;
+    setCartItems(cartData);
+  };
+
+  const getCartAmount = () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemInfo = products.find((product) => product._id === items);
+
+      for (const item in cartItems[items]) {
+        try {
+          if (cartItems[items][item] > 0) {
+            totalAmount += itemInfo.price * cartItems[items][item];
+          }
+        } catch (error) {
+          console.log("error from getting cart amount", error);
+        }
+      }
+    }
+
+    return totalAmount;
   };
   const value = {
     products,
@@ -49,10 +85,11 @@ const ShopContextProvider = (props) => {
     cartItems,
     addToCart,
     getCartCount,
+    updateQuantity,
+    getCartAmount,
+    navigate,
   };
-  useEffect(() => {
-    console.log(cartItems);
-  }, [cartItems]);
+
   return (
     <ShopContext.Provider value={value}>{props.children}</ShopContext.Provider>
   );
