@@ -77,6 +77,7 @@ const PlaceOrder = () => {
             toast.error(error.message);
           }
           break;
+        case "razorpay":
         case "stripe":
           try {
             const responseStripe = await axios.post(
@@ -93,9 +94,6 @@ const PlaceOrder = () => {
           } catch (error) {
             console.log(error);
           }
-
-          break;
-        case "razorpay":
           break;
 
         default:
