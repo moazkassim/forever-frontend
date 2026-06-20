@@ -8,21 +8,22 @@ const Cart = () => {
     useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
   useEffect(() => {
-    let tempData = [];
-    for (const items in cartItems) {
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          tempData.push({
-            _id: items,
-            size: item,
-            quantity: cartItems[items][item],
-          });
+    if (products.length > 0) {
+      let tempData = [];
+      for (const items in cartItems) {
+        for (const item in cartItems[items]) {
+          if (cartItems[items][item] > 0) {
+            tempData.push({
+              _id: items,
+              size: item,
+              quantity: cartItems[items][item],
+            });
+          }
         }
       }
+      setCartData(tempData);
     }
-    setCartData(tempData);
-    console.log("cart data is ", tempData);
-  }, [cartItems]);
+  }, [cartItems, products]);
   return (
     <div className=" border-t pt-14">
       <div className=" text-2xl mb-3">
@@ -65,15 +66,15 @@ const Cart = () => {
                 min={1}
                 className=" border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1"
                 defaultValue={item.quantity}
-                onChange={(e) =>
+                onChange={(e) => {
                   e.target.value === "" || e.target.value === "0"
                     ? null
                     : updateQuantity(
-                        productData._id,
-                        productData.size,
+                        item._id,
+                        item.size,
                         Number(e.target.value),
-                      )
-                }
+                      );
+                }}
               />
               <img
                 src={assets.bin_icon}
